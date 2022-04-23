@@ -1,0 +1,22 @@
+---
+title: "mosq_eda"
+author: "Chris Wojan"
+date: "4/23/2022"
+output: html_document
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+## Load packages
+library(tidyverse)
+
+```
+
+```{r data_read, include = FALSE}
+
+mosq_subset <- read_rds("./data/mosq_subset.RDS")
+
+sort_data <- tibble(mosq_subset$mos_sorting)
+
+```
