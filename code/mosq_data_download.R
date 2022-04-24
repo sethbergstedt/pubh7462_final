@@ -14,4 +14,5 @@ mosq_data_subset <- loadByProduct(dpID = "DP1.10043.001", site = "all",
                                   startdate = "2021-06", enddate = "2021-06")
 
 ## Save mosq data list as .RDS
-write_rds(mosq_data_subset, "./data/mosq_subset.RDS")
+write_rds(mosq_data_subset, "./data/mosq_subset.rds")
+
