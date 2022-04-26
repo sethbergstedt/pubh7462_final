@@ -81,9 +81,10 @@ domain_biomass_gg <- domain_biomass_map %>%
   ) %>%
   ggplot() +
   geom_sf(aes(fill = mean_bm, text = text_label)) +
-  labs(title = "Mosquito Biomass Per Hour") +
+  labs(title = "Mosquito Biomass Per Hour; 2021-06") +
   scale_fill_viridis_c(name = "Mean Mosquito Biomass Per Hour") +
-  theme_map()
+  theme_map() +
+  theme(legend.position = "bottom")
 
 domain_biomass_gg
 
@@ -91,5 +92,43 @@ domain_biomass_gg
 #ggplotly(domain_biomass_gg, tooltip = "text") %>%
 #  style(hoveron = "fills")
 
+
+```
+
+```{r richness_eda, echo = TRUE, message = FALSE, warning = FALSE}
+
+## Count total number of species cuaght in each domain
+domain_richness_summary <- id_data %>%
+  select(domain_id, scientific_name) %>%
+  unique() %>%
+  group_by(domain_id) %>%
+  summarize(richness = n()) %>%
+  ungroup() %>%
+  mutate(
+    text_label = str_c("Total Species Richness: ", richness)
+  )
+
+## Join domain polygons to richness data
+domain_richness_map <- left_join(neon_domains, domain_richness_summary, by = "domain_id")
+
+## Creat ggplot map of domains filled by richness
+domain_richness_gg <- domain_richness_map %>%
+  mutate(
+    domain_id = factor(domain_id) %>%
+      fct_reorder(.x = richness, .desc = FALSE)
+  ) %>%
+  ggplot() +
+  geom_sf(aes(fill = richness, text = text_label)) +
+  labs(title = "Total Mosquito Species Richness; 2021-06") +
+  scale_fill_viridis_c(name = "Mosquito Species Richness") +
+  theme_map() +
+  theme(legend.position = "bottom")
+
+## Draw map
+domain_richness_gg
+
+## Render plotly
+#ggplotly(domain_richness_gg, tooltip = "text") %>%
+#  style(hoveron = "fills")
 
 ```
