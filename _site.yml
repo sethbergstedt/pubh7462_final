@@ -1,0 +1,23 @@
+name: "PUBH 7462 Final Project: NEON Mosquito Data Exploration"
+header-includes: 
+  \usepackage{graphicx}
+  \usepackage{float}
+output_dir: "."
+navbar:
+  title: "Home"
+  right:
+    - text: Data
+      href: data.html
+    - text: Phenology
+      menu:
+        - text: Biomass
+          href: biomass.html
+        - text: Species Richness
+          href: richness.html
+    - text: Pathogen Vectors
+      href: path_vectors.html
+    - text: Limitations and Caveats
+      href: limits.html
+output:  
+   html_document:
+    theme: flatly
