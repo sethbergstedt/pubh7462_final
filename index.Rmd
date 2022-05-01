@@ -1,0 +1,27 @@
+---
+title: "Exploring Spatiotemporal Trends in Mosquito Communities across the United States"
+---
+
+<h3>Motivation</h3>
+
+<font size = "4"> 
+Mosquitoes are insects of interest in regards to ecology, as well as public health. In the United States, the incidence of mosquito-borne diseases in humans is highly variable across years (Rosenberg et al. 2018). Investigating population trends over space and time can lead to a better understanding of these patterns in incidence. Further, research in this area can help illuminate changes in both ecological health of a region, as well as guide public health decisions regarding species control of problem mosquitoes. 
+</font>  
+  
+  
+<h3>Questions</h3>
+
+<font size = "4">
+1. How does overall mosquito biomass and species richness change over the course of the year, and how does that vary across US regions?  
+2. How abundant are medically important mosquitoes throughout the US, and how prevalent ar emosquito-borne pathogens?  
+3. What are some of the limitations and caveats of the data? For example, do certain locations have trends in reporting?  
+</font>
+
+<h3>Literature Cited</h3>
+
+<font size = "4">
+Rosenberg, R., N. P. Lindsey, M. Fischer, C. J. Gregory, A. F. Hinckley, P. S. Mead, G. Paz-Bailey, S. H. Waterman, N. A. Drexler, G. J. Kersh, H. Hooks, S. K. Partridge, S. N. Visser, C. B. Beard, and L. R. Petersen. 2018. Vital Signs: Trends in Reported Vectorborne Disease Cases — United States and Territories, 2004–2016. MMWR Morb. Mortal. Wkly. Rep. 67: 496–501.
+</font>
+
+
+
