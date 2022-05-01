@@ -9,10 +9,10 @@
 library(neonUtilities)
 library(tidyverse)
 
-## Load subset of mosquito data
-mosq_data_subset <- loadByProduct(dpID = "DP1.10043.001", site = "all", 
-                                  startdate = "2021-06", enddate = "2021-06")
+## Load subset of mosquito data - first year with good coverage through last year of RELEASE data
+mosq_data <- loadByProduct(dpID = "DP1.10043.001", site = "all", 
+                                  startdate = "2016-01", enddate = "2020-12")
 
 ## Save mosq data list as .RDS
-write_rds(mosq_data_subset, "./data/mosq_subset.rds")
+write_rds(mosq_data, "./data/mosq_data.rds")
 
