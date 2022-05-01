@@ -1,0 +1,134 @@
+---
+title: "mosq_eda"
+author: "Chris Wojan"
+date: "4/23/2022"
+output: html_document
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+## Load packages
+library(tidyverse)
+library(lubridate)
+library(sf)
+library(janitor)
+library(plotly)
+library(ggthemes)
+
+
+## Working directory for .RMD
+knitr::opts_knit$set(echo = TRUE,
+                     root.dir = rprojroot::find_rstudio_root_file())
+
+```
+
+```{r data_read, echo = TRUE, message = FALSE, warning = FALSE}
+
+## Read in mosquito data list
+mosq_subset <- read_rds("data/mosq_subset.rds")
+
+## Read in domain shapefile
+neon_domains <- st_read("./data/NEONDomains_0/NEON_Domains.shp") %>%
+  janitor::clean_names() %>%
+  mutate(
+    domain_id = domain_id %>% ## Convert Domain ID from int to char
+      as.character() %>%
+      str_pad(width = 2, side = "left", pad = "0") %>%
+      str_c("D", .)
+    )
+
+## Grab the sorting data
+sort_data <- tibble(mosq_subset$mos_sorting) %>%
+  janitor::clean_names() %>%
+  mutate(
+    biomass = total_weight - bycatch_weight, ## Get mosquito mass
+    trap_hours = as.numeric(collect_date - set_date), ## Get trapping time
+    biomass_per_hour = biomass / trap_hours ## Standardize biomass by trapping time
+  )
+
+## Grab the ID data
+id_data <- tibble(mosq_subset$mos_expertTaxonomistIDProcessed) %>%
+  janitor::clean_names()
+
+```
+
+```{r biomass_eda, echo = TRUE, message = FALSE, warning = FALSE}
+
+## Summarize biomass per hour by domain
+domain_biomass_summary <- sort_data %>% 
+  group_by(domain_id) %>%
+  summarize(
+    mean_bm = mean(biomass_per_hour),
+    sd_bm = sd(biomass_per_hour), 
+    n = n()
+  ) %>%
+  ungroup() %>%
+  mutate(
+    text_label = str_c("Mean Biomass per Hour: ", mean_bm, 
+                       "\nBiomass per Hour S.D: ", sd_bm,
+                       "\nNumber of Trap Events: ", n)
+  )
+
+## Join biomass summary to domain geometry  
+domain_biomass_map <- left_join(neon_domains, domain_biomass_summary, by = "domain_id")
+
+## Create ggplot map of domain biomass
+domain_biomass_gg <- domain_biomass_map %>%
+  mutate(
+    domain_id = factor(domain_id) %>%
+      fct_reorder(.x = mean_bm, .desc = FALSE)
+  ) %>%
+  ggplot() +
+  geom_sf(aes(fill = mean_bm, text = text_label)) +
+  labs(title = "Mosquito Biomass Per Hour; 2021-06") +
+  scale_fill_viridis_c(name = "Mean Mosquito Biomass Per Hour") +
+  theme_map() +
+  theme(legend.position = "bottom")
+
+domain_biomass_gg
+
+## Render plotly
+#ggplotly(domain_biomass_gg, tooltip = "text") %>%
+#  style(hoveron = "fills")
+
+
+```
+
+```{r richness_eda, echo = TRUE, message = FALSE, warning = FALSE}
+
+## Count total number of species cuaght in each domain
+domain_richness_summary <- id_data %>%
+  select(domain_id, scientific_name) %>%
+  unique() %>%
+  group_by(domain_id) %>%
+  summarize(richness = n()) %>%
+  ungroup() %>%
+  mutate(
+    text_label = str_c("Total Species Richness: ", richness)
+  )
+
+## Join domain polygons to richness data
+domain_richness_map <- left_join(neon_domains, domain_richness_summary, by = "domain_id")
+
+## Creat ggplot map of domains filled by richness
+domain_richness_gg <- domain_richness_map %>%
+  mutate(
+    domain_id = factor(domain_id) %>%
+      fct_reorder(.x = richness, .desc = FALSE)
+  ) %>%
+  ggplot() +
+  geom_sf(aes(fill = richness, text = text_label)) +
+  labs(title = "Total Mosquito Species Richness; 2021-06") +
+  scale_fill_viridis_c(name = "Mosquito Species Richness") +
+  theme_map() +
+  theme(legend.position = "bottom")
+
+## Draw map
+domain_richness_gg
+
+## Render plotly
+#ggplotly(domain_richness_gg, tooltip = "text") %>%
+#  style(hoveron = "fills")
+
+```
