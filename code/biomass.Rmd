@@ -1,0 +1,146 @@
+---
+title: "biomass"
+author: "Chris Wojan"
+date: "5/1/2022"
+output:
+    flexdashboard::flex_dashboard
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+## Load packages
+library(tidyverse)
+library(lubridate)
+library(sf)
+library(janitor)
+library(plotly)
+library(ggthemes)
+library(leaflet)
+library(htmltools)
+library(viridis)
+
+
+## Working directory for .RMD
+knitr::opts_knit$set(echo = TRUE,
+                     root.dir = rprojroot::find_rstudio_root_file())
+
+#Set Scientific notation output and decimal places for knitr
+options(scipen = 999)
+options(digits = 4)
+options(dplyr.summarise.inform = FALSE)
+
+```
+
+```{r data_read, include = FALSE}
+
+## Read in mosquito data list
+mosq_data <- read_rds("./data/mosq_data.rds")
+
+## Read in domain shapefile
+neon_domains <- st_read("./data/NEONDomains_0/NEON_Domains.shp") %>%
+  janitor::clean_names() %>%
+  mutate(
+    domain_id = domain_id %>% ## Convert Domain ID from int to char
+      as.character() %>%
+      str_pad(width = 2, side = "left", pad = "0") %>%
+      str_c("D", .)
+    )
+
+## Grab the sorting data
+sort_data <- tibble(mosq_data$mos_sorting) %>%
+  janitor::clean_names() %>%
+  mutate(
+    month = month(collect_date), ## Grab month of collection
+    biomass = total_weight - bycatch_weight, ## Get mosquito mass
+    trap_hours = as.numeric(collect_date - set_date), ## Get trapping time
+    biomass_per_hour = biomass / trap_hours ## Standardize biomass by trapping time
+  ) %>%
+  filter(
+    trap_hours != 0 ## Remove erroneous entries with absent trapping times
+  )
+
+```
+
+```{r data_process, include = FALSE}
+
+## Summarize biomass per hour by domain
+domain_biomass_summary <- sort_data %>% 
+  group_by(domain_id) %>%
+  summarize(
+    mean_bm = mean(biomass_per_hour, na.rm = TRUE),
+    sd_bm = sd(biomass_per_hour, na.rm = TRUE), 
+    n = n()
+  ) %>%
+  ungroup() %>%
+  mutate(
+    text_label = str_c("<b>", domain_id, "</b>", 
+                       "<br/>Mean Biomass per Hour: ", mean_bm, 
+                       "<br/>Biomass per Hour S.D: ", sd_bm,
+                       "<br/>Number of Trap Events: ", n)
+  )
+
+## Join biomass summary to domain geometry  
+domain_biomass_map <- left_join(neon_domains, domain_biomass_summary, by = "domain_id")
+
+## Summarize biomass per hour by domain by month
+domain_biomass_phenology <- sort_data %>% 
+  group_by(domain_id, month) %>%
+  summarize(
+    mean_bm = mean(biomass_per_hour, na.rm = TRUE),
+    sd_bm = sd(biomass_per_hour, na.rm = TRUE), 
+    n = n()
+  ) %>%
+  ungroup() %>%
+  mutate(
+    text_label = str_c("<b>", domain_id, "</b>", 
+                       "\nMean Biomass per Hour: ", mean_bm, 
+                       "\nBiomass per Hour S.D: ", sd_bm,
+                       "\nNumber of Trap Events: ", n)
+  )
+  
+```
+
+Column 
+-------------------------------------
+    
+### Domain Map
+
+```{r domain_map, echo = FALSE}
+
+leaflet_palette <- colorNumeric(palette = "viridis", domain = domain_biomass_map$mean_bm)
+
+leaflet(data = domain_biomass_map) %>%
+  addProviderTiles(providers$CartoDB.Positron) %>% 
+  addPolygons(
+    color = ~leaflet_palette(mean_bm),
+    label = ~map(text_label, HTML)
+  )
+
+```
+
+Column 
+-------------------------------------
+    
+### Seasonal Patterns
+
+```{r phenology_plot, echo = FALSE}
+
+domain_biomass_pheno_gg <- ggplot(data = domain_biomass_phenology) +
+  geom_line(aes(x = month, y = mean_bm, color = domain_id)) +
+  geom_point(aes(x = month, y = mean_bm, color = domain_id, text = text_label)) +
+  scale_x_continuous(breaks = 1:12, labels = month.abb) +
+  scale_color_discrete(name = "Domain ID") +
+  labs(x = "Month", y = "Mean Biomass per Hour (units)") +
+  theme_bw() +
+  theme(legend.position = "bottom")
+
+ggplotly(domain_biomass_pheno_gg, tooltip = "text") %>%
+  layout(legend = list(orientation = "h", y = -0.2))
+```
+
+```{r render_command, include = FALSE}
+
+#rmarkdown::render("./code/biomass.Rmd", output_format = "flexdashboard::flex_dashboard")
+
+```
