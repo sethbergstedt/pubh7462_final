@@ -3,6 +3,10 @@ title: ""
 output: html_document
 ---
 
+<!---
+CSS style tag from https://stackoverflow.com/questions/34906002/increase-width-of-entire-html-rmarkdown-output
+--->
+
 <style type="text/css">
 .main-container {
   max-width: 100% !important;
