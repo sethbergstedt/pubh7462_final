@@ -11,7 +11,7 @@ navbar:
     - text: Phenology
       menu:
         - text: Biomass
-          href: code/biomass.html
+          href: biomass.html
         - text: Species Richness
           href: richness.html
     - text: Pathogen Vectors

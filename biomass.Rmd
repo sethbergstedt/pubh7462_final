@@ -1,0 +1,23 @@
+---
+title: ""
+output: html_document
+---
+
+<style type="text/css">
+.main-container {
+  max-width: 100% !important;
+  margin: auto;
+}
+</style>
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+
+## Working directory for .RMD
+knitr::opts_knit$set(echo = TRUE,
+                     root.dir = rprojroot::find_rstudio_root_file())
+
+```
+
+<iframe src="code/biomass_dashboard.html" height="650" width="100%" title="Biomass Trends"></iframe>
