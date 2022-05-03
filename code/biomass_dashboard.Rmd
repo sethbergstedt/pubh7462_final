@@ -90,11 +90,11 @@ domain_biomass_summary <- sort_data %>%
 
 ## Join biomass summary to domain geometry  
 domain_biomass_map <- left_join(neon_domains_w_points, domain_biomass_summary, by = "domain_id") %>%
-    mutate(
+  mutate(
     text_label = str_c("<b>", domain_id, ": ",
                        domain_name,  "</b>",
-                       "</br>Mean Biomass/Hour: ", mean_bm, 
-                       "</br>Biomass/Hour S.D: ", sd_bm,
+                       "</br>Mean Biomass/Hour: ", round(mean_bm, digits = 4), "mg",
+                       "</br>Biomass/Hour S.D: ", round(sd_bm, digits = 4), "mg",
                        "</br># of Trap Events: ", n)
   )
 
@@ -113,8 +113,8 @@ domain_biomass_phenology <- sort_data %>%
   ) %>%
   mutate(
     text_label = str_c(domain_id, ": ", domain_name,
-                       "\nMean Biomass/Hour: ", mean_bm, 
-                       "\nBiomass/Hour S.D: ", sd_bm,
+                       "\nMean Biomass/Hour: ", round(mean_bm, digits = 4), "mg",
+                       "\nBiomass/Hour S.D: ", round(sd_bm, digits = 4), "mg",
                        "\n# of Trap Events: ", n)
   )
   
@@ -163,7 +163,7 @@ Column
     
 ### Mean Biomass per Hour Across Trapping Events by Month; 2016 - 2020
 
-```{r phenology_plot, echo = FALSE}
+```{r phenology_plot, echo = FALSE, message = FALSE, warning = FALSE}
 
 domain_biomass_pheno_gg <- ggplot(data = domain_biomass_phenology) +
   geom_line(aes(x = month, y = mean_bm, color = domain_id)) +
@@ -180,6 +180,6 @@ ggplotly(domain_biomass_pheno_gg, tooltip = "text") %>%
 
 ```{r render_command, include = FALSE}
 
-#rmarkdown::render("biomass_dashboard.Rmd", output_format = "flexdashboard::flex_dashboard")
+#rmarkdown::render("./code/biomass_dashboard.Rmd", output_format = "flexdashboard::flex_dashboard")
 
 ```
