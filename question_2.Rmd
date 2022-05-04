@@ -5,8 +5,8 @@ date: "4/25/2022"
 output: html_document
 ---
 
-```{r setup, include = FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+```{r setup, include = FALSE, message = FALSE, warning = FALSE}
+knitr::opts_chunk$set(echo = FALSE)
 ## Load packages
 library(tidyverse)
 library(lubridate)
@@ -20,7 +20,7 @@ knitr::opts_knit$set(echo = TRUE,
                      root.dir = rprojroot::find_rstudio_root_file())
 ```
 
-```{r data_read, echo = FALSE, message = FALSE, warning = FALSE}
+```{r data_read, echo = FALSE, message = FALSE, warning = FALSE, include = FALSE}
 ## Read in mosquito data list
 id_subset <- read_rds("data/id_subset.rds")
 
@@ -49,8 +49,19 @@ pathogen_data <- tibble(pathogen_subset$mos_pathogenresults) %>%
 ```
 
 ```{r vector count, echo = FALSE, message = FALSE, warning = FALSE}
+
+## Summarize overall count by domain
+overall_summary <- id_data %>% 
+  group_by(domain_id) %>%
+  summarize(
+    overall = sum(individual_count, na.rm = TRUE)
+  ) %>%
+  ungroup()
+
+
 ## Summarize vector count by domain
 vector_summary <- id_data %>% 
+  group_by(domain_id) %>%
   filter(scientific_name %in% c("Aedes aegypti",
                                 "Aedes albopictus",
                                 "Aedes canadensis",
@@ -63,37 +74,43 @@ vector_summary <- id_data %>%
                                 "Culex quinquefasciatus",
                                 "Anopheles freeborni",
                                 "Anopheles quadrimaculatus")) %>%
-  group_by(domain_id) %>%
   summarize(
-    n = n()
+    n = sum(individual_count, na.rm = TRUE)
   ) %>%
-  ungroup() %>%
+  ungroup()
+
+
+proportional_summary <- left_join(vector_summary, overall_summary, by = "domain_id") %>%
   mutate(
-    text_label = str_c("\nDisease Vector Count: ", n)
+    proportion_vector = round(n/overall, digits = 4)
+  ) %>%
+  mutate(
+    text_label = str_c("\nOverall Mosquito Count: ", overall,"\nOverall Vector Count: ", n, "\nProportion Vector Species: ", proportion_vector)
   )
 
+
+
 ## Join vector summary to domain geometry  
-domain_vector_map <- left_join(neon_domains, vector_summary, by = "domain_id")
+domain_vector_map <- left_join(neon_domains, proportional_summary, by = "domain_id")
 
 ## Create ggplot map
 domain_vector_gg <- domain_vector_map %>%
   mutate(
     domain_id = factor(domain_id) %>%
-      fct_reorder(.x = n, .desc = FALSE)
+      fct_reorder(.x = proportion_vector, .desc = FALSE)
   ) %>%
   ggplot() +
-  geom_sf(aes(fill = n, text = text_label)) +
-  labs(title = "Disease Vector Species Count 2016-2019") +
+  geom_sf(aes(fill = proportion_vector, text = text_label)) +
+  labs(title = "Disease Vector Population Count 2016-2019") +
   theme(
-    plot.title = element_text(size = 22, face = "bold"),
+    plot.title = element_text(size = 20, face = "bold"),
     legend.title = element_text(size = 12),
     panel.background = element_blank(),
     axis.ticks.x = element_blank(),
     axis.ticks.y = element_blank(),
     axis.text = element_blank()
   ) +
-  scale_fill_viridis_c(name = "Disease Vector Count")
-domain_vector_gg
+  scale_fill_viridis_c(name = "Disease Vector Proportion")
 
 ## Render plotly
 ggplotly(domain_vector_gg, tooltip = "text") %>%
@@ -130,7 +147,7 @@ domain_pathogen_gg <- domain_pathogen_map %>%
   geom_sf(aes(fill = n, text = text_label)) +
   labs(title = "Pathogen Positive PCR Tests 2016-2019") +
     theme(
-    plot.title = element_text(size = 22, face = "bold"),
+    plot.title = element_text(size = 20, face = "bold"),
     legend.title = element_text(size = 12),
     panel.background = element_blank(),
     axis.ticks.x = element_blank(),
@@ -138,16 +155,10 @@ domain_pathogen_gg <- domain_pathogen_map %>%
     axis.text = element_blank()
   ) +
   scale_fill_viridis_c(name = "Positive PCR Count")
-domain_pathogen_gg
 
 ## Render plotly
 ggplotly(domain_pathogen_gg, tooltip = "text") %>%
   style(hoveron = "fills")
-
-# Try our leaflet
-leaflet(data = domain_pathogen_map) %>%
-  addProviderTiles(neon_domains)
-
 
 ```
 
