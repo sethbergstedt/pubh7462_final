@@ -1,5 +1,5 @@
 ---
-title: "question_2"
+title: "The Relationship Between Pathogen Vector Prevalence and Pathogen Presence"
 author: "Taylor Christian"
 date: "4/25/2022"
 output: html_document
@@ -103,7 +103,7 @@ domain_vector_gg <- domain_vector_map %>%
   geom_sf(aes(fill = proportion_vector, text = text_label)) +
   labs(title = "Disease Vector Population Count 2016-2019") +
   theme(
-    plot.title = element_text(size = 20, face = "bold"),
+    plot.title = element_text(size = 18, face = "bold"),
     legend.title = element_text(size = 12),
     panel.background = element_blank(),
     axis.ticks.x = element_blank(),
@@ -147,7 +147,7 @@ domain_pathogen_gg <- domain_pathogen_map %>%
   geom_sf(aes(fill = n, text = text_label)) +
   labs(title = "Pathogen Positive PCR Tests 2016-2019") +
     theme(
-    plot.title = element_text(size = 20, face = "bold"),
+    plot.title = element_text(size = 18, face = "bold"),
     legend.title = element_text(size = 12),
     panel.background = element_blank(),
     axis.ticks.x = element_blank(),

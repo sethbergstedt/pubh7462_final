@@ -15,7 +15,7 @@ navbar:
         - text: Species Richness
           href: richness.html
     - text: Pathogen Vectors
-      href: path_vectors.html
+      href: question_2.html
     - text: Limitations and Caveats
       href: limits.html
 output:  
