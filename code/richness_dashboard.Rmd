@@ -75,8 +75,8 @@ domain_center <- c(mean(c(domain_extent["xmin"], domain_extent["xmax"])),
 domain_richness_summary <- id_data %>%
   group_by(domain_id) %>%
   summarize(
-    richness = specific_epithet %>% 
-      base::Filter(function(x) {ifelse(x %in% "sp." | is.na(x), return(FALSE), return(TRUE))}, .) %>%
+    richness = scientific_name %>% 
+      base::Filter(function(x) {ifelse(str_detect(x, "sp.") | is.na(x), return(FALSE), return(TRUE))}, .) %>%
       factor() %>% levels() %>% length(),
     n = subsample_id %>% factor() %>% levels %>% length()
   ) %>%
@@ -92,12 +92,13 @@ domain_richness_map <- left_join(neon_domains_w_points, domain_richness_summary,
                        "</br># of Subsamples IDed: ", n)
   )
 
+
 ## Summarize richness by domain by month
 domain_richness_phenology <- id_data %>% 
   group_by(domain_id, month) %>%
   summarize(
-    richness = specific_epithet %>% 
-      base::Filter(function(x) {ifelse(x %in% "sp." | is.na(x), return(FALSE), return(TRUE))}, .) %>%
+    richness = scientific_name %>% 
+      base::Filter(function(x) {ifelse(str_detect(x, "sp.") | is.na(x), return(FALSE), return(TRUE))}, .) %>%
       factor() %>% levels() %>% length(),
     n = subsample_id %>% factor() %>% levels %>% length()
   )  %>%

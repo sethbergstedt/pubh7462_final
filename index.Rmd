@@ -15,13 +15,19 @@ Authors: Seth Bergstedt, Taylor Christian, Chris Wojan
 Mosquitoes are insects of interest in regards to ecology, as well as public health. In the United States, the incidence of mosquito-borne diseases in humans is highly variable across years (Rosenberg et al. 2018). Investigating population trends over space and time can lead to a better understanding of these patterns in incidence. Further, research in this area can help illuminate changes in both ecological health of a region, as well as guide public health decisions regarding species control of problem mosquitoes. 
 </font>  
 
+<h3>Data Source
+
+<font size = "4">
+The data used in this project was mosquito trapping data from the National Ecological Observatory Network (NEON). More information can be found in the data tab.
+</font>
   
 <h3>Questions</h3>
 
 <font size = "4">
-1. How does overall mosquito biomass and species richness change over the course of the year, and how does that vary across US regions?  
-2. How abundant are medically important mosquitoes throughout the US, and how prevalent ar emosquito-borne pathogens?  
-3. What are some of the limitations and caveats of the data? For example, do certain locations have trends in reporting?  
+1. How does overall mosquito biomass and species richness change over the course of the year, and how does that vary across US regions? (Spatial and Seasonal Trends)  
+2. How do the biomass of mosquitoes collected and number of mosquitoes identified by genus nationwide vary by year? (Annual Trends)  
+3. How abundant are medically important mosquitoes throughout the US, and how prevalent are mosquito-borne pathogens? (Pathogen Vectors)  
+4. What are some of the limitations and caveats of the data? For example, do certain locations have trends in reporting? (Caveats and Limitations)  
 </font>
 
 <h3>Literature Cited</h3>
