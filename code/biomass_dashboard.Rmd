@@ -93,8 +93,8 @@ domain_biomass_map <- left_join(neon_domains_w_points, domain_biomass_summary, b
   mutate(
     text_label = str_c("<b>", domain_id, ": ",
                        domain_name,  "</b>",
-                       "</br>Mean Biomass/Hour: ", round(mean_bm, digits = 4), "mg",
-                       "</br>Biomass/Hour S.D: ", round(sd_bm, digits = 4), "mg",
+                       "</br>Mean Biomass: ", round(mean_bm, digits = 4), "mg/hr",
+                       "</br>Biomass S.D: ", round(sd_bm, digits = 4), "mg/hr",
                        "</br># of Trap Events: ", n)
   )
 
@@ -113,8 +113,8 @@ domain_biomass_phenology <- sort_data %>%
   ) %>%
   mutate(
     text_label = str_c(domain_id, ": ", domain_name,
-                       "\nMean Biomass/Hour: ", round(mean_bm, digits = 4), "mg",
-                       "\nBiomass/Hour S.D: ", round(sd_bm, digits = 4), "mg",
+                       "\nMean Biomass: ", round(mean_bm, digits = 4), "mg/hr",
+                       "\nBiomass S.D: ", round(sd_bm, digits = 4), "mg/hr",
                        "\n# of Trap Events: ", n)
   )
   
@@ -153,7 +153,7 @@ leaflet(data = domain_biomass_map) %>%
     position = "topright",
     pal = leaflet_palette,
     values = ~mean_bm,
-    title = "Mean Biomass/Hour </br>Across Trapping Events </br>(mg)"
+    title = "Mean Biomass </br>Across Trapping Events </br>(mg/hr)"
   )
 
 ```
@@ -170,12 +170,14 @@ domain_biomass_pheno_gg <- ggplot(data = domain_biomass_phenology) +
   geom_point(aes(x = month, y = mean_bm, color = domain_id, text = text_label)) +
   scale_x_continuous(breaks = 1:12, labels = month.abb) +
   scale_color_manual(name = "Domain ID", values = domain_colors) +
-  labs(x = "Month", y = "Mean Biomass per Hour (mg)") +
+  labs(x = "Month", y = "Mean Biomass (mg/hr)") +
   theme_bw() +
-  theme(legend.position = "none")
+  theme(legend.position = "bottom")
 
 ggplotly(domain_biomass_pheno_gg, tooltip = "text") %>%
-  layout(legend = list(orientation = "h", y = -0.2))
+  layout(legend = list(orientation = "h", y = -0.2,
+                       title = list(side = "top"),
+                       font = list(size = 8)))
 ```
 
 ```{r render_command, include = FALSE}

@@ -78,7 +78,7 @@ domain_richness_summary <- id_data %>%
     richness = specific_epithet %>% 
       base::Filter(function(x) {ifelse(x %in% "sp." | is.na(x), return(FALSE), return(TRUE))}, .) %>%
       factor() %>% levels() %>% length(),
-    n = n()
+    n = subsample_id %>% factor() %>% levels %>% length()
   ) %>%
   ungroup()
 
@@ -89,7 +89,7 @@ domain_richness_map <- left_join(neon_domains_w_points, domain_richness_summary,
     text_label = str_c("<b>", domain_id, ": ",
                        domain_name,  "</b>",
                        "</br>Total Species Richness: ", richness,
-                       "</br># of Traps IDed: ", n)
+                       "</br># of Subsamples IDed: ", n)
   )
 
 ## Summarize richness by domain by month
@@ -99,7 +99,7 @@ domain_richness_phenology <- id_data %>%
     richness = specific_epithet %>% 
       base::Filter(function(x) {ifelse(x %in% "sp." | is.na(x), return(FALSE), return(TRUE))}, .) %>%
       factor() %>% levels() %>% length(),
-    n = n()
+    n = subsample_id %>% factor() %>% levels %>% length()
   )  %>%
   ungroup() %>%
   left_join(
@@ -110,7 +110,7 @@ domain_richness_phenology <- id_data %>%
     text_label = str_c(domain_id, ": ", domain_name,
                        "\nMonth: ", month.abb[month],
                        "\nTotal Species Richness: ", richness,
-                       "\n# of Traps IDed: ", n)
+                       "\n# of Subsamples IDed: ", n)
   )
   
 ```
@@ -173,10 +173,12 @@ domain_richness_pheno_gg <- ggplot(data = domain_richness_phenology) +
   scale_color_manual(name = "Domain ID", values = domain_colors) +
   labs(x = "Month", y = "Species Richness") +
   theme_bw() +
-  theme(legend.position = "none")
+  theme(legend.position = "bottom")
 
 ggplotly(domain_richness_pheno_gg, tooltip = "text") %>%
-  layout(legend = list(orientation = "h", y = -0.2))
+  layout(legend = list(orientation = "h", y = -0.2,
+                       title = list(side = "top"),
+                       font = list(size = 8)))
 ```
 
 ```{r render_command, include = FALSE}
