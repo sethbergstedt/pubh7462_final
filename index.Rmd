@@ -2,12 +2,19 @@
 title: "Exploring Spatiotemporal Trends in Mosquito Communities across the United States"
 ---
 
+Authors: Seth Bergstedt, Taylor Christian, Chris Wojan 
+
 <h3>Motivation</h3>
+
+
+<div style= "float : right; position : relative; padding-left: 50px">
+![Image Credit: Centers for Disease Control and Prevention](pics/Aedes-aegypti-adult-small.jpg)
+</div>
 
 <font size = "4"> 
 Mosquitoes are insects of interest in regards to ecology, as well as public health. In the United States, the incidence of mosquito-borne diseases in humans is highly variable across years (Rosenberg et al. 2018). Investigating population trends over space and time can lead to a better understanding of these patterns in incidence. Further, research in this area can help illuminate changes in both ecological health of a region, as well as guide public health decisions regarding species control of problem mosquitoes. 
 </font>  
-  
+
   
 <h3>Questions</h3>
 
