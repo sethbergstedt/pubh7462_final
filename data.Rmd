@@ -68,5 +68,8 @@ pathogen_subset <- loadByProduct(dpID = "DP1.10041.001", site = "all",
 write_rds(pathogen_subset, "./data/pathogen_subset.rds")
 ```
 
+### Data Citations
 
+NEON (National Ecological Observatory Network). Mosquitoes sampled from CO2 traps (DP1.10043.001), RELEASE-2022. https://doi.org/10.48443/c7h7-q918. Dataset accessed from https://data.neonscience.org on April 24, 2022
 
+NEON (National Ecological Observatory Network). Mosquito pathogen status (DP1.10041.001), RELEASE-2022. https://doi.org/10.48443/m7qd-mm61. Dataset accessed from https://data.neonscience.org on ______, 2022

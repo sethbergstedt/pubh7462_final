@@ -66,27 +66,17 @@ biomass_summary <- sort_data %>%
   ) %>%
   ungroup()
 
+
 ## Summarize mosquito counts by year
 count_summary <- id_data %>%
+  filter(!is.na(genus)) %>%
+  mutate(
+    genus = genus %>% factor() %>% fct_collapse(Other = c("Mansonia", "Orthopodomyia", "Uranotaenia", "Wyeomyia"))
+  ) %>%
   group_by(year, genus) %>%
   summarize(
     individual_count = sum(individual_count)
   ) %>%
-  filter(!is.na(genus)) %>%
-  mutate(
-    other = ifelse(genus %in% c("Aedes", "Anopheles", "Coquillettidia", "Culiseta", "Culex", "Psorophora"),
-                   0, 1)
-  )
-
-## Pool non-common genera as "Other"
-count_sum_pooled <- count_summary %>%
-  filter(other == 0) %>%
-  bind_rows(count_summary %>%
-              filter(other == 1) %>%
-              group_by(year) %>%
-              summarize(individual_count = sum(individual_count)) %>%
-              mutate(genus = "Other")) %>%
-  select(-other) %>%
   mutate(
     genus = genus %>% factor() %>% fct_reorder(.x = individual_count, .fun = sum, .desc = TRUE),
     text_label = str_c("Genus: ", genus,
@@ -94,19 +84,17 @@ count_sum_pooled <- count_summary %>%
                             "\nYear: ", year)
     )
 
-
-formatC(123456, big.mark = ",", format = "fg")
-
 ```
 
 ### Annual Trends in Biomass
 
 ```{r bm_plots, echo = FALSE}
 
+## Plot total biomass
 bm_tot <- biomass_summary %>%
   ggplot() +
   geom_col(aes(x = year, y = total_bm_kg, fill = year)) +
-  scale_fill_viridis() +
+  scale_fill_viridis(option = "cividis") +
   labs(x = "Year", y = "Total Biomass (kg)") +
   coord_flip(ylim = c(max(biomass_summary$total_bm_kg) * 1.1, 0),
              xlim = c(max(biomass_summary$year) + 0.7, min(biomass_summary$year) - 0.7), 
@@ -116,10 +104,11 @@ bm_tot <- biomass_summary %>%
   theme_bw() +
   theme(legend.position = "none")
 
+## Plot biomass by hour
 bm_hr <- biomass_summary %>%
   ggplot() +
   geom_col(aes(x = year, y = bm_per_hr, fill = year)) +
-  scale_fill_viridis() +
+  scale_fill_viridis(option = "cividis") +
   labs(x = "Year", y = "Total Biomass by Trapping Time (mg/hr)") +
   coord_flip(ylim = c(0, max(biomass_summary$bm_per_hr) * 1.1),
              xlim = c(max(biomass_summary$year) + 0.7, min(biomass_summary$year) - 0.7), 
@@ -131,6 +120,7 @@ bm_hr <- biomass_summary %>%
         axis.ticks.y = element_blank(),
         axis.text.x = element_text(hjust = -0.01))
 
+## Combine plots
 bm_tot + bm_hr
 
 ```
@@ -142,7 +132,9 @@ Total biomass is calculated as the sum of mosquito biomass collected in all trap
 ### Annual Trends in Number of Individual Identified by Genus
 
 ```{r species_plot, echo = FALSE, warning = FALSE}
-count_plot <- count_sum_pooled %>%
+
+## Plot number mosquitoes IDed by genus
+count_plot <- count_summary %>%
   ggplot() +
   geom_col(aes(x = year, y = individual_count, fill = genus, text = text_label)) +
   scale_fill_viridis_d(option = "plasma") + 
@@ -150,7 +142,10 @@ count_plot <- count_sum_pooled %>%
   labs(x = "Year", y = "# Individuals Identified") +
   theme_bw()
 
+## Make plotly
 ggplotly(count_plot, tooltip = "text") %>%
   layout(legend = list(title = list(text = "Genus")))
 
 ```
+
+Note: "Other" genera include Mansonia, Orthopodomyia, Uranotaenia, and Wyeomyia.
