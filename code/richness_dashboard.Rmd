@@ -167,7 +167,7 @@ Column
 ```{r phenology_plot, echo = FALSE, message = FALSE, warning = FALSE}
 
 domain_richness_pheno_gg <- ggplot(data = domain_richness_phenology) +
-  geom_line(aes(x = month, y = richness, color = domain_id)) +
+  geom_smooth(aes(x = month, y = richness, color = domain_id), se = FALSE, size = 0.5, span = 0.4) +
   geom_point(aes(x = month, y = richness, color = domain_id, text = text_label)) +
   scale_x_continuous(breaks = 1:12, labels = month.abb) +
   scale_color_manual(name = "Domain ID", values = domain_colors) +
@@ -178,7 +178,7 @@ domain_richness_pheno_gg <- ggplot(data = domain_richness_phenology) +
 ggplotly(domain_richness_pheno_gg, tooltip = "text") %>%
   layout(legend = list(orientation = "h", y = -0.2,
                        title = list(side = "top"),
-                       font = list(size = 8)))
+                       font = list(size = 6)))
 ```
 
 ```{r render_command, include = FALSE}
