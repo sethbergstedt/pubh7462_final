@@ -8,7 +8,7 @@ navbar:
   right:
     - text: Data
       href: data.html
-    - text: Spatial and Seasonal Trends
+    - text: Phenology
       menu:
         - text: Biomass
           href: biomass.html
