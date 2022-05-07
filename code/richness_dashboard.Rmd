@@ -1,0 +1,189 @@
+---
+title: "NEON Mosquito Species Richness Trends"
+output:
+    flexdashboard::flex_dashboard
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+## Load packages
+library(tidyverse)
+library(lubridate)
+library(sf)
+library(janitor)
+library(plotly)
+library(ggthemes)
+library(leaflet)
+library(htmltools)
+library(viridis)
+
+
+## Working directory for .RMD
+knitr::opts_knit$set(echo = TRUE,
+                     root.dir = rprojroot::find_rstudio_root_file())
+
+#Set Scientific notation output and decimal places for knitr
+options(scipen = 999)
+options(digits = 4)
+options(dplyr.summarise.inform = FALSE)
+
+```
+
+```{r data_read, include = FALSE}
+
+## Read in mosquito data list
+mosq_data <- read_rds("./data/mosq_data.rds")
+
+## Read in domain shapefile
+neon_domains <- st_read("./data/NEONDomains_0/NEON_Domains.shp") %>%
+  janitor::clean_names() %>%
+  mutate(
+    domain_id = domain_id %>% ## Convert Domain ID from int to char
+      as.character() %>%
+      str_pad(width = 2, side = "left", pad = "0") %>%
+      str_c("D", .)
+    )
+
+## Grab the ID data
+id_data <- tibble(mosq_data$mos_expertTaxonomistIDProcessed) %>%
+  janitor::clean_names() %>%
+  mutate(
+    month = month(collect_date)
+  )
+
+```
+
+```{r data_process, include = FALSE}
+
+## Grab the label locations of the domains
+domain_centers <- neon_domains %>% 
+  pull(geometry) %>% 
+  st_point_on_surface() %>% 
+  st_coordinates()
+neon_domains_w_points <- neon_domains %>% 
+  bind_cols(domain_centers)
+
+## Find geographic extent and center
+domain_extent <- neon_domains %>%
+  pull(geometry) %>%
+  st_bbox()
+domain_center <- c(mean(c(domain_extent["xmin"], domain_extent["xmax"])), 
+                   mean(c(domain_extent["ymin"], domain_extent["ymax"])))
+
+## Count total number of species caught in each domain
+domain_richness_summary <- id_data %>%
+  group_by(domain_id) %>%
+  summarize(
+    richness = scientific_name %>% 
+      base::Filter(function(x) {ifelse(str_detect(x, "sp.") | is.na(x), return(FALSE), return(TRUE))}, .) %>%
+      factor() %>% levels() %>% length(),
+    n = subsample_id %>% factor() %>% levels %>% length()
+  ) %>%
+  ungroup()
+
+
+## Join richness summary to domain geometry  
+domain_richness_map <- left_join(neon_domains_w_points, domain_richness_summary, by = "domain_id") %>%
+  mutate(
+    text_label = str_c("<b>", domain_id, ": ",
+                       domain_name,  "</b>",
+                       "</br>Total Species Richness: ", richness,
+                       "</br># of Subsamples IDed: ", n)
+  )
+
+
+## Summarize richness by domain by month
+domain_richness_phenology <- id_data %>% 
+  group_by(domain_id, month) %>%
+  summarize(
+    richness = scientific_name %>% 
+      base::Filter(function(x) {ifelse(str_detect(x, "sp.") | is.na(x), return(FALSE), return(TRUE))}, .) %>%
+      factor() %>% levels() %>% length(),
+    n = subsample_id %>% factor() %>% levels %>% length()
+  )  %>%
+  ungroup() %>%
+  left_join(
+    neon_domains %>% select(domain_id, domain_name),
+    by = "domain_id"
+  ) %>%
+  mutate(
+    text_label = str_c(domain_id, ": ", domain_name,
+                       "\nMonth: ", month.abb[month],
+                       "\nTotal Species Richness: ", richness,
+                       "\n# of Subsamples IDed: ", n)
+  )
+  
+```
+
+Column 
+-------------------------------------
+    
+### Total Species Richness by Domain; 2016-2020
+
+```{r domain_map, echo = FALSE}
+
+
+
+leaflet_palette <- colorNumeric(palette = "viridis", domain = domain_richness_map$richness)
+
+domain_colors <- domain_richness_map %>%
+  group_by(domain_id) %>%
+  summarize(
+    richness = mean(richness)
+  ) %>%
+  pull(richness) %>%
+  leaflet_palette()
+
+leaflet(data = domain_richness_map) %>%
+  addProviderTiles(providers$CartoDB.Positron) %>% 
+  setView(lng = domain_center[1], lat = domain_center[2] + 7, zoom = 3) %>%
+  addPolygons(
+    fillColor = ~leaflet_palette(richness),
+    fillOpacity = 0.25,
+    color = "black",
+    weight = 1,
+    label = ~map(text_label, HTML)
+  ) %>%
+  addLabelOnlyMarkers(
+    lng = ~X,
+    lat = ~Y,
+    label = ~domain_id,
+    labelOptions = labelOptions(noHide = TRUE, textOnly = TRUE, direction = "center")
+  ) %>%
+  addLegend(
+    position = "topright",
+    pal = leaflet_palette,
+    values = ~richness,
+    title = "Total Species </br>Richness"
+  )
+
+```
+
+Column 
+-------------------------------------
+    
+### Species Richness by Month; 2016 - 2020
+
+```{r phenology_plot, echo = FALSE, message = FALSE, warning = FALSE}
+
+domain_richness_pheno_gg <- ggplot(data = domain_richness_phenology) +
+  geom_smooth(aes(x = month, y = richness, color = domain_id), se = FALSE, size = 0.5, span = 0.4) +
+  geom_point(aes(x = month, y = richness, color = domain_id, text = text_label)) +
+  scale_x_continuous(breaks = 1:12, labels = month.abb) +
+  scale_color_manual(name = "Domain ID", values = domain_colors) +
+  labs(x = "Month", y = "Species Richness") +
+  theme_bw() +
+  theme(legend.position = "bottom")
+
+ggplotly(domain_richness_pheno_gg, tooltip = "text") %>%
+  layout(legend = list(orientation = "h", y = -0.2,
+                       title = list(side = "top"),
+                       font = list(size = 6)))
+```
+
+```{r render_command, include = FALSE}
+
+#rmarkdown::render("./code/richness_dashboard.Rmd", output_format = "flexdashboard::flex_dashboard")
+
+```

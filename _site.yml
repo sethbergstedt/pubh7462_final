@@ -8,14 +8,16 @@ navbar:
   right:
     - text: Data
       href: data.html
-    - text: Phenology
+    - text: Spatial and Seaonal Trends
       menu:
         - text: Biomass
           href: biomass.html
         - text: Species Richness
           href: richness.html
+    - text: Annual Trends
+      href: annual_trends.html
     - text: Pathogen Vectors
-      href: path_vectors.html
+      href: question_2.html
     - text: Limitations and Caveats
       href: limits.html
 output:  

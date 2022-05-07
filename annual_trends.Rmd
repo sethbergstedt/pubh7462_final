@@ -1,0 +1,151 @@
+---
+title: "Nationwide NEON Mosquito Annual Trends: 2016 - 2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+## Load packages
+library(tidyverse)
+library(lubridate)
+library(janitor)
+library(plotly)
+library(viridis)
+library(patchwork)
+library(scales)
+
+
+## Working directory for .RMD
+knitr::opts_knit$set(echo = TRUE,
+                     root.dir = rprojroot::find_rstudio_root_file())
+
+#Set Scientific notation output and decimal places for knitr
+options(scipen = 999)
+options(digits = 4)
+options(dplyr.summarise.inform = FALSE)
+
+```
+
+```{r data_read, include = FALSE}
+
+## Read in mosquito data list
+mosq_data <- read_rds("./data/mosq_data.rds")
+
+## Grab the sorting data
+sort_data <- tibble(mosq_data$mos_sorting) %>%
+  janitor::clean_names() %>%
+  mutate(
+    year = year(collect_date), ## Grab year of collection
+    biomass = (total_weight - bycatch_weight) * 1000, ## Get mosquito mass in mg
+    trap_hours = as.numeric(collect_date - set_date), ## Get trapping time
+    biomass_per_hour = biomass / trap_hours ## Standardize biomass by trapping time
+  ) %>%
+  filter(
+    trap_hours != 0 ## Remove erroneous entries with absent trapping times
+  )
+
+## Grab the ID data
+id_data <- tibble(mosq_data$mos_expertTaxonomistIDProcessed) %>%
+  janitor::clean_names() %>%
+  mutate(
+    year = year(collect_date)
+  )
+```
+
+```{r data_process, include = FALSE}
+
+## Summarize biomass by year
+biomass_summary <- sort_data %>%
+  group_by(year) %>%
+  summarize(
+    total_bm = sum(biomass),
+    total_bm_kg = total_bm / 1000000,
+    total_hrs = sum(trap_hours),
+    bm_per_hr = total_bm / total_hrs
+  ) %>%
+  ungroup()
+
+
+## Summarize mosquito counts by year
+count_summary <- id_data %>%
+  filter(!is.na(genus)) %>%
+  mutate(
+    genus = genus %>% factor() %>% fct_collapse(Other = c("Mansonia", "Orthopodomyia", "Uranotaenia", "Wyeomyia"))
+  ) %>%
+  group_by(year, genus) %>%
+  summarize(
+    individual_count = sum(individual_count)
+  ) %>%
+  mutate(
+    genus = genus %>% factor() %>% fct_reorder(.x = individual_count, .fun = sum, .desc = TRUE),
+    text_label = str_c("Genus: ", genus,
+                            "\n# IDed: ", formatC(individual_count, big.mark = ",", format = "fg"),
+                            "\nYear: ", year)
+    )
+
+```
+
+### Annual Trends in Biomass
+
+```{r bm_plots, echo = FALSE}
+
+## Plot total biomass
+bm_tot <- biomass_summary %>%
+  ggplot() +
+  geom_col(aes(x = year, y = total_bm_kg, fill = year)) +
+  scale_fill_viridis(option = "cividis") +
+  labs(x = "Year", y = "Total Biomass (kg)") +
+  coord_flip(ylim = c(max(biomass_summary$total_bm_kg) * 1.1, 0),
+             xlim = c(max(biomass_summary$year) + 0.7, min(biomass_summary$year) - 0.7), 
+             expand = FALSE) +
+  scale_x_reverse() +
+  scale_y_reverse() +
+  theme_bw() +
+  theme(legend.position = "none")
+
+## Plot biomass by hour
+bm_hr <- biomass_summary %>%
+  ggplot() +
+  geom_col(aes(x = year, y = bm_per_hr, fill = year)) +
+  scale_fill_viridis(option = "cividis") +
+  labs(x = "Year", y = "Total Biomass by Trapping Time (mg/hr)") +
+  coord_flip(ylim = c(0, max(biomass_summary$bm_per_hr) * 1.1),
+             xlim = c(max(biomass_summary$year) + 0.7, min(biomass_summary$year) - 0.7), 
+             expand = FALSE) +
+  theme_bw() +
+  theme(legend.position = "none",
+        axis.title.y = element_blank(),
+        axis.text.y = element_blank(),
+        axis.ticks.y = element_blank(),
+        axis.text.x = element_text(hjust = -0.01))
+
+## Combine plots
+bm_tot + bm_hr
+
+```
+
+Total biomass is calculated as the sum of mosquito biomass collected in all traps across all NEON domains for each year (in kilograms). Total biomass by trapping time is that value (in milligrams) divided by the time spent trapping across all domains. 
+
+</br>
+
+### Annual Trends in Number of Individuals Identified by Genus
+
+```{r species_plot, echo = FALSE, warning = FALSE}
+
+## Plot number mosquitoes IDed by genus
+count_plot <- count_summary %>%
+  ggplot() +
+  geom_col(aes(x = year, y = individual_count, fill = genus, text = text_label)) +
+  scale_fill_viridis_d(option = "plasma") + 
+  scale_y_continuous(labels = comma) +
+  labs(x = "Year", y = "# Individuals Identified") +
+  theme_bw()
+
+## Make plotly
+ggplotly(count_plot, tooltip = "text") %>%
+  layout(legend = list(title = list(text = "Genus")))
+
+```
+
+Note: "Other" genera include Mansonia, Orthopodomyia, Uranotaenia, and Wyeomyia.

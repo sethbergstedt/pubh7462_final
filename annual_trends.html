@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+
+<title>Nationwide NEON Mosquito Annual Trends: 2016 - 2020</title>
+
+<script src="site_libs/header-attrs-2.11/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/flatly.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<script src="site_libs/htmlwidgets-1.5.4/htmlwidgets.js"></script>
+<script src="site_libs/plotly-binding-4.10.0/plotly.js"></script>
+<script src="site_libs/typedarray-0.1/typedarray.min.js"></script>
+<link href="site_libs/crosstalk-1.2.0/css/crosstalk.min.css" rel="stylesheet" />
+<script src="site_libs/crosstalk-1.2.0/js/crosstalk.min.js"></script>
+<link href="site_libs/plotly-htmlwidgets-css-2.5.1/plotly-htmlwidgets.css" rel="stylesheet" />
+<script src="site_libs/plotly-main-2.5.1/plotly-latest.min.js"></script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.tab('show');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Home</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="data.html">Data</a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Spatial and Seaonal Trends
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="biomass.html">Biomass</a>
+    </li>
+    <li>
+      <a href="richness.html">Species Richness</a>
+    </li>
+  </ul>
+</li>
+<li>
+  <a href="annual_trends.html">Annual Trends</a>
+</li>
+<li>
+  <a href="question_2.html">Pathogen Vectors</a>
+</li>
+<li>
+  <a href="limits.html">Limitations and Caveats</a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+
+
+<h1 class="title toc-ignore">Nationwide NEON Mosquito Annual Trends: 2016 - 2020</h1>
+
+</div>
+
+
+<div id="annual-trends-in-biomass" class="section level3">
+<h3>Annual Trends in Biomass</h3>
+<p><img src="annual_trends_files/figure-html/bm_plots-1.png" width="672" /></p>
+<p>Total biomass is calculated as the sum of mosquito biomass collected in all traps across all NEON domains for each year (in kilograms). Total biomass by trapping time is that value (in milligrams) divided by the time spent trapping across all domains.</p>
+<p></br></p>
+</div>
+<div id="annual-trends-in-number-of-individuals-identified-by-genus" class="section level3">
+<h3>Annual Trends in Number of Individuals Identified by Genus</h3>
+<div id="htmlwidget-3fcf1fffce62a64788e9" style="width:672px;height:480px;" class="plotly html-widget"></div>
+<script type="application/json" data-for="htmlwidget-3fcf1fffce62a64788e9">{"x":{"data":[{"orientation":"v","width":[0.900000000000091,0.900000000000091,0.900000000000091,0.900000000000091,0.900000000000091],"base":[226509,258485,178319,179542,75259],"x":[2016,2017,2018,2019,2020],"y":[170770,173099,119690,127068,92130],"text":["Genus: Aedes<br /># IDed: 170,770<br />Year: 2016","Genus: Aedes<br /># IDed: 173,099<br />Year: 2017","Genus: Aedes<br /># IDed: 119,690<br />Year: 2018","Genus: Aedes<br /># IDed: 127,068<br />Year: 2019","Genus: Aedes<br /># IDed: 92,130<br />Year: 2020"],"type":"bar","textposition":"none","marker":{"autocolorscale":false,"color":"rgba(13,8,135,1)","line":{"width":1.88976377952756,"color":"transparent"}},"name":"Aedes","legendgroup":"Aedes","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"orientation":"v","width":[0.900000000000091,0.900000000000091,0.900000000000091,0.900000000000091,0.900000000000091],"base":[143902,142188,101231,108673,51978],"x":[2016,2017,2018,2019,2020],"y":[82607,116297,77088,70869,23281],"text":["Genus: Culex<br /># IDed: 82,607<br />Year: 2016","Genus: Culex<br /># IDed: 116,297<br />Year: 2017","Genus: Culex<br /># IDed: 77,088<br />Year: 2018","Genus: Culex<br /># IDed: 70,869<br />Year: 2019","Genus: Culex<br /># IDed: 23,281<br />Year: 2020"],"type":"bar","textposition":"none","marker":{"autocolorscale":false,"color":"rgba(93,1,166,1)","line":{"width":1.88976377952756,"color":"transparent"}},"name":"Culex","legendgroup":"Culex","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"orientation":"v","width":[0.900000000000091,0.900000000000091,0.900000000000091,0.900000000000091,0.900000000000091],"base":[71868,85618,59378,59824,29037],"x":[2016,2017,2018,2019,2020],"y":[72034,56570,41853,48849,22941],"text":["Genus: Coquillettidia<br /># IDed: 72,034<br />Year: 2016","Genus: Coquillettidia<br /># IDed: 56,570<br />Year: 2017","Genus: Coquillettidia<br /># IDed: 41,853<br />Year: 2018","Genus: Coquillettidia<br /># IDed: 48,849<br />Year: 2019","Genus: Coquillettidia<br /># IDed: 22,941<br />Year: 2020"],"type":"bar","textposition":"none","marker":{"autocolorscale":false,"color":"rgba(156,23,158,1)","line":{"width":1.88976377952756,"color":"transparent"}},"name":"Coquillettidia","legendgroup":"Coquillettidia","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"orientation":"v","width":[0.900000000000091,0.900000000000091,0.900000000000091,0.900000000000091,0.900000000000091],"base":[46882,51094,29155,30964,13405],"x":[2016,2017,2018,2019,2020],"y":[24986,34524,30223,28860,15632],"text":["Genus: Anopheles<br /># IDed: 24,986<br />Year: 2016","Genus: Anopheles<br /># IDed: 34,524<br />Year: 2017","Genus: Anopheles<br /># IDed: 30,223<br />Year: 2018","Genus: Anopheles<br /># IDed: 28,860<br />Year: 2019","Genus: Anopheles<br /># IDed: 15,632<br />Year: 2020"],"type":"bar","textposition":"none","marker":{"autocolorscale":false,"color":"rgba(204,70,120,1)","line":{"width":1.88976377952756,"color":"transparent"}},"name":"Anopheles","legendgroup":"Anopheles","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"orientation":"v","width":[0.900000000000091,0.900000000000091,0.900000000000091,0.900000000000091,0.900000000000091],"base":[25766,34424,22010,22500,11207],"x":[2016,2017,2018,2019,2020],"y":[21116,16670,7145,8464,2198],"text":["Genus: Other<br /># IDed: 21,116<br />Year: 2016","Genus: Other<br /># IDed: 16,670<br />Year: 2017","Genus: Other<br /># IDed: 7,145<br />Year: 2018","Genus: Other<br /># IDed: 8,464<br />Year: 2019","Genus: Other<br /># IDed: 2,198<br />Year: 2020"],"type":"bar","textposition":"none","marker":{"autocolorscale":false,"color":"rgba(237,121,83,1)","line":{"width":1.88976377952756,"color":"transparent"}},"name":"Other","legendgroup":"Other","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"orientation":"v","width":[0.900000000000091,0.900000000000091,0.900000000000091,0.900000000000091,0.900000000000091],"base":[6616,11909,8067,10233,4294],"x":[2016,2017,2018,2019,2020],"y":[19150,22515,13943,12267,6913],"text":["Genus: Psorophora<br /># IDed: 19,150<br />Year: 2016","Genus: Psorophora<br /># IDed: 22,515<br />Year: 2017","Genus: Psorophora<br /># IDed: 13,943<br />Year: 2018","Genus: Psorophora<br /># IDed: 12,267<br />Year: 2019","Genus: Psorophora<br /># IDed: 6,913<br />Year: 2020"],"type":"bar","textposition":"none","marker":{"autocolorscale":false,"color":"rgba(253,179,47,1)","line":{"width":1.88976377952756,"color":"transparent"}},"name":"Psorophora","legendgroup":"Psorophora","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"orientation":"v","width":[0.900000000000091,0.900000000000091,0.900000000000091,0.900000000000091,0.900000000000091],"base":[0,0,0,0,0],"x":[2016,2017,2018,2019,2020],"y":[6616,11909,8067,10233,4294],"text":["Genus: Culiseta<br /># IDed: 6,616<br />Year: 2016","Genus: Culiseta<br /># IDed: 11,909<br />Year: 2017","Genus: Culiseta<br /># IDed: 8,067<br />Year: 2018","Genus: Culiseta<br /># IDed: 10,233<br />Year: 2019","Genus: Culiseta<br /># IDed: 4,294<br />Year: 2020"],"type":"bar","textposition":"none","marker":{"autocolorscale":false,"color":"rgba(240,249,33,1)","line":{"width":1.88976377952756,"color":"transparent"}},"name":"Culiseta","legendgroup":"Culiseta","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null}],"layout":{"margin":{"t":26.2283105022831,"r":7.30593607305936,"b":40.1826484018265,"l":66.4840182648402},"plot_bgcolor":"rgba(255,255,255,1)","paper_bgcolor":"rgba(255,255,255,1)","font":{"color":"rgba(0,0,0,1)","family":"","size":14.6118721461187},"xaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[2015.305,2020.695],"tickmode":"array","ticktext":["2016","2017","2018","2019","2020"],"tickvals":[2016,2017,2018,2019,2020],"categoryorder":"array","categoryarray":["2016","2017","2018","2019","2020"],"nticks":null,"ticks":"outside","tickcolor":"rgba(51,51,51,1)","ticklen":3.65296803652968,"tickwidth":0.66417600664176,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":11.689497716895},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(235,235,235,1)","gridwidth":0.66417600664176,"zeroline":false,"anchor":"y","title":{"text":"Year","font":{"color":"rgba(0,0,0,1)","family":"","size":14.6118721461187}},"hoverformat":".2f"},"yaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[-21579.2,453163.2],"tickmode":"array","ticktext":["0","100,000","200,000","300,000","400,000"],"tickvals":[0,100000,200000,300000,400000],"categoryorder":"array","categoryarray":["0","100,000","200,000","300,000","400,000"],"nticks":null,"ticks":"outside","tickcolor":"rgba(51,51,51,1)","ticklen":3.65296803652968,"tickwidth":0.66417600664176,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":11.689497716895},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(235,235,235,1)","gridwidth":0.66417600664176,"zeroline":false,"anchor":"x","title":{"text":"# Individuals Identified","font":{"color":"rgba(0,0,0,1)","family":"","size":14.6118721461187}},"hoverformat":".2f"},"shapes":[{"type":"rect","fillcolor":"transparent","line":{"color":"rgba(51,51,51,1)","width":0.66417600664176,"linetype":"solid"},"yref":"paper","xref":"paper","x0":0,"x1":1,"y0":0,"y1":1}],"showlegend":true,"legend":{"bgcolor":"rgba(255,255,255,1)","bordercolor":"transparent","borderwidth":1.88976377952756,"font":{"color":"rgba(0,0,0,1)","family":"","size":11.689497716895},"title":{"text":"Genus","font":{"color":"rgba(0,0,0,1)","family":"","size":14.6118721461187}}},"hovermode":"closest","barmode":"relative"},"config":{"doubleClick":"reset","modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"source":"A","attrs":{"4ed267d9f187":{"x":{},"y":{},"fill":{},"text":{},"type":"bar"}},"cur_data":"4ed267d9f187","visdat":{"4ed267d9f187":["function (y) ","x"]},"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.2,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+<p>Note: “Other” genera include Mansonia, Orthopodomyia, Uranotaenia, and Wyeomyia.</p>
+</div>
+
+
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

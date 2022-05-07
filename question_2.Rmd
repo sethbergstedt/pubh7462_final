@@ -1,0 +1,200 @@
+---
+title: "The Relationship Between Pathogen Vector Prevalence and Pathogen Presence"
+author: "Taylor Christian"
+date: "4/25/2022"
+output: html_document
+---
+
+<style type="text/css">
+.main-container {
+  max-width: 100% !important;
+  margin: auto;
+}
+</style>
+
+```{r setup, include = FALSE, message = FALSE, warning = FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+## Load packages
+library(tidyverse)
+library(lubridate)
+library(sf)
+library(janitor)
+library(plotly)
+library(ggthemes)
+library(leaflet)
+## Working directory for .RMD
+knitr::opts_knit$set(echo = TRUE,
+                     root.dir = rprojroot::find_rstudio_root_file())
+```
+
+```{r data_read, echo = FALSE, message = FALSE, warning = FALSE, include = FALSE}
+## Read in mosquito data list
+id_subset <- read_rds("data/id_subset.rds")
+
+## Read in pathogen data list
+pathogen_subset <- read_rds("data/pathogen_subset.rds")
+
+
+## Read in domain shapefile
+neon_domains <- st_read("./data/NEONDomains_0/NEON_Domains.shp") %>%
+  janitor::clean_names() %>%
+  mutate(
+    domain_id = domain_id %>% ## Convert Domain ID from int to char
+      as.character() %>%
+      str_pad(width = 2, side = "left", pad = "0") %>%
+      str_c("D", .)
+    )
+
+
+## ID data to tibble
+id_data <- tibble(id_subset$mos_expertTaxonomistIDProcessed) %>%
+  janitor::clean_names()
+
+## Pathogen data to tibble
+pathogen_data <- tibble(pathogen_subset$mos_pathogenresults) %>%
+  janitor::clean_names()
+```
+
+```{r vector count, echo = FALSE, message = FALSE, warning = FALSE}
+
+## Summarize overall count by domain
+overall_summary <- id_data %>% 
+  group_by(domain_id) %>%
+  summarize(
+    overall = sum(individual_count, na.rm = TRUE)
+  ) %>%
+  ungroup()
+
+
+## Summarize vector count by domain
+vector_summary <- id_data %>% 
+  group_by(domain_id) %>%
+  filter(scientific_name %in% c("Aedes aegypti",
+                                "Aedes albopictus",
+                                "Aedes canadensis",
+                                "Aedes triseriatus",
+                                "Aedes vexans",
+                                "Coquellitidia perturbans",
+                                "Culex pipiens",
+                                "Culex restuans",
+                                "Culex tarsalis",
+                                "Culex quinquefasciatus",
+                                "Anopheles freeborni",
+                                "Anopheles quadrimaculatus")) %>%
+  summarize(
+    n = sum(individual_count, na.rm = TRUE)
+  ) %>%
+  ungroup()
+
+
+proportional_summary <- left_join(vector_summary, overall_summary, domain_name, by = "domain_id") %>%
+  mutate(
+    proportion_vector = round(n/overall, digits = 4)
+  ) %>%
+  left_join(
+    neon_domains %>% select(domain_id, domain_name),
+    by = "domain_id"
+  ) %>%
+  mutate(
+    vector_label = str_c("<b>", domain_id, ": ", 
+                       domain_name, "</b>",
+                       "\nOverall Mosquito Count: ", overall,"\nOverall Vector Count: ", n, "\nProportion Vector Species: ", proportion_vector)
+  )
+
+
+
+## Join vector summary to domain geometry
+domain_vector_map <- left_join(neon_domains, proportional_summary, by = "domain_id")
+
+## Create ggplot map
+domain_vector_gg <- domain_vector_map %>%
+  mutate(
+    domain_id = factor(domain_id) %>%
+      fct_reorder(.x = n, .desc = FALSE)
+  ) %>%
+  ggplot() +
+  geom_sf(aes(fill = n, text = vector_label)) +
+  labs(title = "Disease Vector Population Count 2016-2019") +
+  theme(
+    plot.title = element_text(size = 18, face = "bold"),
+    legend.title = element_text(size = 12),
+    panel.background = element_blank(),
+    axis.ticks.x = element_blank(),
+    axis.ticks.y = element_blank(),
+    axis.text = element_blank()
+  ) +
+  scale_fill_viridis_c(name = "Disease Vector Count")
+
+## Render plotly
+ggplotly(domain_vector_gg, tooltip = "text") %>%
+  style(hoveron = "fills")
+
+```
+##### <b>The figure above displays the trends in overall disease vector.  Especially worthy of note are the Great Lakes, Ozarks Complex, and Southeast domains, as while these domains show high vector counts, these represent relatively low vector proportions.  The greatest number of observed specimens was reported in the Southeast domain.</b>
+
+
+
+
+```{r positive count, echo = FALSE, message = FALSE, warning = FALSE}
+
+## Summarize pathogen overall count by domain
+overall_pathogen_summary <- pathogen_data %>%
+  filter(test_method %in% c("PCR")) %>%
+  group_by(domain_id) %>%
+  summarize(
+    path_overall = n()
+  ) %>%
+  ungroup()
+
+## Summarize pathogen count by domain
+pathogen_summary <- pathogen_data %>% 
+  filter(test_result %in% c("Positive")) %>%
+  group_by(domain_id) %>%
+  summarize(
+    path_n = n()
+  ) %>%
+  ungroup()
+
+proportional_pathogen_summary <- left_join(pathogen_summary, overall_pathogen_summary, by = "domain_id") %>%
+  left_join(
+    neon_domains %>% select(domain_id, domain_name),
+    by = "domain_id"
+  ) %>%
+  mutate(
+    text_label = str_c("Positive PCR Tests: ", path_n)
+  )
+
+
+## Join pathogen summary to domain geometry  
+domain_pathogen_map <- left_join(neon_domains, proportional_pathogen_summary, by = "domain_id")
+
+## Create ggplot map
+domain_pathogen_gg <- domain_pathogen_map %>%
+  mutate(
+    domain_id = factor(domain_id) %>%
+      fct_reorder(.x = path_n, .desc = FALSE)
+  ) %>%
+  ggplot() +
+  geom_sf(aes(fill = path_n, text = text_label)) +
+  labs(title = "Pathogen Positive PCR Tests 2016-2019") +
+    theme(
+    plot.title = element_text(size = 18, face = "bold"),
+    legend.title = element_text(size = 12),
+    panel.background = element_blank(),
+    axis.ticks.x = element_blank(),
+    axis.ticks.y = element_blank(),
+    axis.text = element_blank()
+  ) +
+  scale_fill_viridis_c(name = "Positive PCR Count")
+
+## Render plotly
+ggplotly(domain_pathogen_gg, tooltip = "text") %>%
+  style(hoveron = "fills")
+```
+##### <b>The above figure demonstrates the domains in the US with the highest reported pathogen positive PCR tests.  Due to mosquito-borne pathogens being relatively rare in the US, numbers are overall quite low.  The data indicates a possible connection between positive PCR test appearance and high vector counts, with an apparent "threshold" of vector counts before positive PCR tests begin appearing, though the Taiga domain stands as an exception.  Proportion seems to be a poor indicator of pathogen presence.  The Great Lakes domain, with a proprtion of only 10% of specimens identified as disease vectors, showed the highest number of PCR tests.</b>
+####### PCR tests were performed for the following:<br> `r unique(pathogen_data$test_pathogen_name)`
+
+
+
+
+

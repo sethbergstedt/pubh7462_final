@@ -1,0 +1,32 @@
+---
+title: "Spatial and Seasonal Trends in Mosquito Biomass"
+output: html_document
+---
+
+<!---
+CSS style tag from https://stackoverflow.com/questions/34906002/increase-width-of-entire-html-rmarkdown-output
+--->
+
+<style type="text/css">
+.main-container {
+  max-width: 100% !important;
+  margin: auto;
+}
+</style>
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+
+## Working directory for .RMD
+knitr::opts_knit$set(echo = TRUE,
+                     root.dir = rprojroot::find_rstudio_root_file())
+
+```
+
+### Data from NEON, 2016-2020
+
+Biomass refers to the total weight of mosquitoes trapped, and it is standardized my number of hours trapping to account for different trapping effort across domains and months.
+
+Notes: The shades of the domains in the map match the lines and points on the seasonal plot. Hover over domains on the map or plot points for more information. Double click on domains in the plot legned to see isolated seasonal trends. 
+<iframe src="code/biomass_dashboard.html" height="650" width="100%" title="Biomass Trends"></iframe>
