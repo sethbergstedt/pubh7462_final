@@ -27,7 +27,7 @@ The data used in this project was mosquito trapping data from the National Ecolo
 1. How does overall mosquito biomass and species richness change over the course of the year, and how does that vary across US regions? (Spatial and Seasonal Trends)  
 2. How do the biomass of mosquitoes collected and number of mosquitoes identified by genus nationwide vary by year? (Annual Trends)  
 3. How abundant are medically important mosquitoes throughout the US, and how prevalent are mosquito-borne pathogens? (Pathogen Vectors)  
-4. What are some of the limitations and caveats of the data? For example, do certain locations have trends in reporting? (Caveats and Limitations)  
+4. What trends are present in the taxonomic precision of mosquito reporting, that is to say the most precise classification available?  (Taxonomic Precision)  
 </font>
 
 <h3>Acknowledgments and References</h3>
