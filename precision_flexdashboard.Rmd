@@ -7,6 +7,12 @@ output:
     vertical_layout: fill
 ---
 
+One question that came up when using this dataset was how varied the quality of data collection is. To investigate this, we have focused on sources of missing data and ultimately found that the greatest variability in data quality could be found in the precision of taxonomic classifications present in the dataset. The following dashboard shows how taxonomic precision varies from region to region as well as how this precision has changed over time in each region. This is summarized by assigning a score to each observation based on the most precise taxonomy present (genus gets a score of 1, species gets a score of 2, and subspecies gets a score of 2.5).
+
+Altogether, these plots indicate that the precision of mosquito taxonomy does indeed vary by region and over time (though the temporal trends appear to be exclusively seasonal). Alaska appears to have significantly lower precision than other regions while the Northeastern Coast appears to have much higher precision.  
+
+A note: actual data missingness (missing taxonomy altogether or missing counts) were associated with all subject specific data to be missing (apart from collection time and collection location). Looking into the data documentation, I couldn't find an explanation for this (perhaps this is the result of past data entries being corrected with a shell of the data remaining).
+
 Column {.tabset}
 -------------------------------------------
 
@@ -14,9 +20,11 @@ Column {.tabset}
 library(tidyverse)
 library(lubridate)
 library(gt)
+library(sf)
 library(paletteer)
 library(plotly)
 library(flexdashboard)
+library(ggthemes)
 
 #Working directory for .RMD
 knitr::opts_knit$set(echo = TRUE,
@@ -75,7 +83,7 @@ dat_test = mos_id %>%
 # The latter is from Vector Disease Control International
 ```
 
-### Taxonomic Precision by Region
+### Taxonomic Precision by Genus
 
 ```{r, echo=FALSE}
 dat_mis = mos_id %>%
@@ -103,8 +111,36 @@ miss_gg = ggplot(domain_mis_map) +
   geom_sf(aes(text = text_label, 
               fill = prop_taxon_genus)) + 
   labs(title = "Precision of Mosquito Taxonometric Measurements by Region",
-       fill = "Total Caught") + 
+       fill = "Proportion Identified to Genus") + 
   scale_fill_viridis_c(name = "Proportion Identified only to Genus") +
+  theme_map()
+
+ggplotly(miss_gg, tooltip = "text")
+```
+
+### Taxonomic Precision by Species
+
+```{r, echo=FALSE}
+miss_gg = ggplot(domain_mis_map) + 
+  geom_sf(aes(text = text_label, 
+              fill = prop_taxon_species)) + 
+  labs(title = "Precision of Mosquito Taxonometric Measurements by Region",
+       fill = "Proportion Identified to Species") + 
+  scale_fill_viridis_c(name = "Proportion Identified only to Species") +
+  theme_map()
+
+ggplotly(miss_gg, tooltip = "text")
+```
+
+### Taxonomic Precision by Subspecies
+
+```{r, echo=FALSE}
+miss_gg = ggplot(domain_mis_map) + 
+  geom_sf(aes(text = text_label, 
+              fill = prop_taxon_subspecies)) + 
+  labs(title = "Precision of Mosquito Taxonometric Measurements by Region",
+       fill = "Proportion Identified to Sub-Species") + 
+  scale_fill_viridis_c(name = "Proportion Identified only to Sub-Species") +
   theme_map()
 
 ggplotly(miss_gg, tooltip = "text")
@@ -113,7 +149,7 @@ ggplotly(miss_gg, tooltip = "text")
 
 ### Taxonomic Precision Trends over Time
 
-```{r, echo=FALSE}
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
 dat_trend = mos_id %>%
   filter(!is.na(individualCount),!is.na(taxonRank)) %>%
   janitor::clean_names() %>%
@@ -124,8 +160,8 @@ dat_trend = mos_id %>%
   pivot_wider(names_from = taxon_rank, values_from = taxon_count) %>%
   mutate(across(.fns = function(x) {ifelse(is.na(x),0,x)})) %>%
   group_by(domain_id,collection_day) %>%
-  mutate(tax_precision = genus + 2*species + 2.5*subspecies,
-         tax_precision = tax_precision / mean(tax_precision)) %>%
+  mutate(tax_precision = log(genus + 2*species + 2.5*subspecies),
+         tax_precision = tax_precision) %>%
   ungroup() %>%
   mutate(domain_id = as.factor(domain_id),
          domain_id = fct_recode(domain_id,
@@ -147,20 +183,21 @@ dat_trend = mos_id %>%
                                 "Pacific Northwest" = "D16",
                                 "Pacific Northwest" = "D17",
                                 "Tundra" = "D18",
-                                "Taiga" = "D19"),
+                                "Taiga" = "D19",
+                                "Pacific Tropical" = "D20"),
          collection_day = as_date(collection_day),
          text_label = str_c("Collection Day: ", collection_day,
                             "\nTaxonomic Precision Index: ", tax_precision))
 
 trend_gg = ggplot(dat_trend,aes(x = collection_day, y = tax_precision, text = text_label)) +
-  geom_jitter(alpha = 0.4, color = "steelblue") + 
+  geom_jitter(alpha = 0.4, color = "steelblue", size = 0.6) + 
   geom_smooth(color = "royalblue4") + 
   facet_wrap(~domain_id) + 
   labs(title = "Taxonomic Precision Over Time by Region",
        x = "Collection Day",
        y = "Taxonomic Precision Index (Higher = more precise)") +
   theme_few() + 
-  scale_x_date(date_breaks = "1 month", date_labels = "%m %y", expand = expansion())
+  scale_x_date(date_breaks = "1 year", date_labels = "%y", expand = expansion())
 
 ggplotly(trend_gg, tooltip = "text")
 ```
