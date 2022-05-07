@@ -36,7 +36,7 @@ pathogen_subset <- read_rds("data/pathogen_subset.rds")
 
 
 ## Read in domain shapefile
-neon_domains <- st_read("./data/NEON_Domains.shp") %>%
+neon_domains <- st_read("./data/NEONDomains_0/NEON_Domains.shp") %>%
   janitor::clean_names() %>%
   mutate(
     domain_id = domain_id %>% ## Convert Domain ID from int to char
