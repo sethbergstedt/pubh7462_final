@@ -25,9 +25,40 @@ The data used in this project was mosquito trapping data from the National Ecolo
 
 <font size = "4">
 1. How does overall mosquito biomass and species richness change over the course of the year, and how does that vary across US regions? (Spatial and Seasonal Trends)  
+</br>
 2. How do the biomass of mosquitoes collected and number of mosquitoes identified by genus nationwide vary by year? (Annual Trends)  
+</br>
 3. How abundant are medically important mosquitoes throughout the US, and how prevalent are mosquito-borne pathogens? (Pathogen Vectors)  
-4. What trends are present in the taxonomic precision of mosquito reporting, that is to say the most precise classification available?  (Taxonomic Precision)  
+</br>
+4. At what precision were mosquitoes identified and how does that vary in time and space? (Taxonomic Precision)  
+</font>
+
+<h3>Analysis Approach</h3>
+
+<font size = "4">
+- Download NEON mosquito CO2 trapping data and pathogen ID data from the NEON API.  
+- Download shapefile of NEON domains from NEON website.  
+- Calculate variables of interest in mosquito data.  
+- Summarize variables by domain, month, year depending on question.  
+- Join summary data with domain polygon shapefile.  
+- Draw maps and figures displaying trends.  
+</font>
+
+<h3>Summary of Results</h3>
+
+<font size = "4">
+1. Spatial and Seasonal Trends:   
+- Biomass is highest in the Great Lakes and Tundra Domains, with seasonal peaks in July.  
+- Species Richness is highest for the domains in the Southeast US, such as the Southern Plains.  
+</br>
+2. Annual Trends:  
+- Mosquito biomass/hr and genera proportions are fairly consistent over the years.  
+</br>
+3. Pathogen Vectors:  
+- Disease vectors are most common in the Northern Plains Domain, and positive tests for pathogen were most common for the Great Lakes Domain.  
+</br>
+4. Taxonomic Precision:  
+- Many mosquitoes in the Alaskan domains were only IDed to genus, while many mosquitoes in the Northeast Domain were identified all the way to subspecies.  
 </font>
 
 <h3>Acknowledgments and References</h3>

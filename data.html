@@ -13,7 +13,7 @@
 
 <title>Data Source</title>
 
-<script src="site_libs/header-attrs-2.13/header-attrs.js"></script>
+<script src="site_libs/header-attrs-2.11/header-attrs.js"></script>
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="site_libs/bootstrap-3.3.5/css/flatly.min.css" rel="stylesheet" />
@@ -60,7 +60,6 @@ if (window.hljs) {
 
 
 
-
 <style type = "text/css">
 .main-container {
   max-width: 940px;
@@ -81,9 +80,6 @@ button.code-folding-btn:focus {
 }
 summary {
   display: list-item;
-}
-details > summary > p:only-child {
-  display: inline;
 }
 pre code {
   padding: 0;
@@ -236,7 +232,7 @@ $(document).ready(function () {
 <div class="navbar navbar-default  navbar-fixed-top" role="navigation">
   <div class="container">
     <div class="navbar-header">
-      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
@@ -252,7 +248,7 @@ $(document).ready(function () {
   <a href="data.html">Data</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
     Spatial and Seasonal Trends
      
     <span class="caret"></span>
@@ -291,9 +287,20 @@ $(document).ready(function () {
 
 <div id="data-source-description" class="section level3">
 <h3>Data Source Description</h3>
-<p>The National Ecological Observatory Network (NEON) is a continent-scale environmental monitoring project funded by the National Science Foundation to evaluate the changing ecology of regions in the United States over time. Researchers collect biotic and abiotic data in aquatic and terrestrial systems, including information on climate, habitat biogeochemistry, and organismal communities. All of this data is available to the public through the NEON Data Portal. We used the mosquito CO2 trapping data and pathogen identification data from this portal, which includes the counts of different species captured with CDC light traps and the presence of pathogens in pooled sub-samples of those trap contents. Based on data coverage, only the year 2016-2020 were used for basic questions relating to biomass, species richness, and number of mosquitoes identified. For questions relating to pathogens, 2020 data was not used because there are few pathogen identification results from that year as of yet.</p>
-<p>National Ecological Observatory Network Data Portal:</p>
-<p><a href="https://data.neonscience.org/" class="uri">https://data.neonscience.org/</a></p>
+<p>The National Ecological Observatory Network (NEON) is a continent-scale environmental monitoring project funded by the National Science Foundation to evaluate the changing ecology of regions in the United States over time. Researchers collect biotic and abiotic data in aquatic and terrestrial systems, including information on climate, habitat biogeochemistry, and organismal communities. All of this data is available to the public through the NEON Data Portal. We used the mosquito CO2 trapping data and pathogen identification data from this portal, which includes the counts of different species captured with CDC light traps and the presence of pathogens in pooled sub-samples of those trap contents. Based on data coverage, only the year 2016-2020 were used for basic questions relating to biomass, species richness, number of mosquitoes identified, and taxonomic precision. For questions relating to pathogens, 2020 data was not used because there are few pathogen identification results from that year as of yet.</p>
+<p>National Ecological Observatory Network Data Portal: <a href="https://data.neonscience.org/" class="uri">https://data.neonscience.org/</a><br />
+</br> NEON Domain shapefile obtained from:<br />
+<a href="https://www.neonscience.org/data-samples/data/spatial-data-maps" class="uri">https://www.neonscience.org/data-samples/data/spatial-data-maps</a></p>
+</div>
+<div id="key-variables" class="section level3">
+<h3>Key Variables</h3>
+<p>Mosquito Biomass : The mass of mosquitoes collected in a trap (total biomass - bycatch biomass)<br />
+Trapping Time : Time a trap was deployed (collect time - set time)<br />
+Mosquito Biomass per Hour : Mosquito mass standardized by trapping time (mosquito biomass / trap hours)<br />
+Genus : Genus of mosquito subsample identified<br />
+Species : Species of mosquito subsample identified<br />
+Subspecies : Subspecies of mosquito subsample identified<br />
+Pathogen Presence: Presence or absence of a given mosquito-borne pathogen determined by PCR</p>
 </div>
 <div id="data-download-scripts" class="section level3">
 <h3>Data Download Scripts</h3>

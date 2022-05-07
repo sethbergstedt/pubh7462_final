@@ -13,7 +13,7 @@
 
 <title>Exploring Spatiotemporal Trends in Mosquito Communities across the United States</title>
 
-<script src="site_libs/header-attrs-2.13/header-attrs.js"></script>
+<script src="site_libs/header-attrs-2.11/header-attrs.js"></script>
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="site_libs/bootstrap-3.3.5/css/flatly.min.css" rel="stylesheet" />
@@ -60,7 +60,6 @@ if (window.hljs) {
 
 
 
-
 <style type = "text/css">
 .main-container {
   max-width: 940px;
@@ -81,9 +80,6 @@ button.code-folding-btn:focus {
 }
 summary {
   display: list-item;
-}
-details > summary > p:only-child {
-  display: inline;
 }
 pre code {
   padding: 0;
@@ -236,7 +232,7 @@ $(document).ready(function () {
 <div class="navbar navbar-default  navbar-fixed-top" role="navigation">
   <div class="container">
     <div class="navbar-header">
-      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
@@ -252,7 +248,7 @@ $(document).ready(function () {
   <a href="data.html">Data</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
     Spatial and Seasonal Trends
      
     <span class="caret"></span>
@@ -307,9 +303,32 @@ Motivation
 Questions
 </h3>
 <p><font size = "4"> 1. How does overall mosquito biomass and species richness change over the course of the year, and how does that vary across US regions? (Spatial and Seasonal Trends)<br />
-2. How do the biomass of mosquitoes collected and number of mosquitoes identified by genus nationwide vary by year? (Annual Trends)<br />
-3. How abundant are medically important mosquitoes throughout the US, and how prevalent are mosquito-borne pathogens? (Pathogen Vectors)<br />
-4. What are some of the limitations and caveats of the data? For example, do certain locations have trends in reporting? (Caveats and Limitations)<br />
+</br> 2. How do the biomass of mosquitoes collected and number of mosquitoes identified by genus nationwide vary by year? (Annual Trends)<br />
+</br> 3. How abundant are medically important mosquitoes throughout the US, and how prevalent are mosquito-borne pathogens? (Pathogen Vectors)<br />
+</br> 4. At what precision were mosquitoes identified and how does that vary in time and space? (Taxonomic Precision)<br />
+</font></p>
+<h3>
+Analysis Approach
+</h3>
+<p><font size = "4"> - Download NEON mosquito CO2 trapping data and pathogen ID data from the NEON API.<br />
+- Download shapefile of NEON domains from NEON website.<br />
+- Calculate variables of interest in mosquito data.<br />
+- Summarize variables by domain, month, year depending on question.<br />
+- Join summary data with domain polygon shapefile.<br />
+- Draw maps and figures displaying trends.<br />
+</font></p>
+<h3>
+Summary of Results
+</h3>
+<p><font size = "4"> 1. Spatial and Seasonal Trends:<br />
+- Biomass is highest in the Great Lakes and Tundra Domains, with seasonal peaks in July.<br />
+- Species Richness is highest for the domains in the Southeast US, such as the Southern Plains.<br />
+</br> 2. Annual Trends:<br />
+- Mosquito biomass/hr and genera proportions are fairly consistent over the years.<br />
+</br> 3. Pathogen Vectors:<br />
+- Disease vectors are most common in the Northern Plains Domain, and positive tests for pathogen were most common for the Great Lakes Domain.<br />
+</br> 4. Taxonomic Precision:<br />
+- Many mosquitoes in the Alaskan domains were only IDed to genus, while many mosquitoes in the Northeast Domain were identified all the way to subspecies.<br />
 </font></p>
 <h3>
 Acknowledgments and References
