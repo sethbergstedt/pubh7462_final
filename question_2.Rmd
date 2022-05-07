@@ -25,9 +25,6 @@ library(leaflet)
 ## Working directory for .RMD
 knitr::opts_knit$set(echo = TRUE,
                      root.dir = rprojroot::find_rstudio_root_file())
-
-## Align figures
-fig.align = "right"
 ```
 
 ```{r data_read, echo = FALSE, message = FALSE, warning = FALSE, include = FALSE}
