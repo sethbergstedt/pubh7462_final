@@ -1,0 +1,131 @@
+---
+title: "Missing Data EDA"
+author: "Seth Bergstedt"
+output: html_document
+---
+
+```{r,message=FALSE}
+library(tidyverse)
+library(lubridate)
+library(sf)
+library(janitor)
+library(plotly)
+library(ggthemes)
+
+mosq_subset <- read_rds("./data/mosq_subset.rds")
+
+## Read in domain shapefile
+neon_domains <- st_read("./data/NEONDomains_0/NEON_Domains.shp") %>%
+  janitor::clean_names() %>%
+  mutate(
+    domain_id = domain_id %>% ## Convert Domain ID from int to char
+      as.character() %>%
+      str_pad(width = 2, side = "left", pad = "0") %>%
+      str_c("D", .)
+    )
+
+mos_id = mosq_subset$mos_expertTaxonomistIDProcessed
+
+# Analysis Directions: Missingness by Region With Summaries of taxonRank props in text
+# Ordinalize taxonRank and graph trends in mean taxonRank over time while facetng by region
+
+############### Missingness by Region ###############
+
+# Discuss/Highlight the fact that Region D02 Is missing counts for NA's
+
+dat_strange = mos_id %>%
+  filter(is.na(individualCount))
+
+dat_test = mos_id %>%
+  filter(is.na(taxonRank))
+
+# No meaningful information on samples for which there isn't individual count information
+# No meaningful information on sample for which there isn't taxon data
+# The former is exclusively from the Kansas Biologic Survey, 
+# The latter is from Vector Disease Control International
+# All of these strange observations come from collections in June of 2021. Various times.
+
+dat_mis = mos_id %>%
+  filter(!is.na(individualCount),!is.na(taxonRank)) %>%
+  group_by(domainID, taxonRank) %>%
+  summarize(taxon_count = sum(individualCount)) %>%
+  ungroup() %>% 
+  group_by(domainID) %>%
+  mutate(prop_taxon = taxon_count / sum(taxon_count)) %>%
+  group_by(domainID,taxonRank) %>%
+  pivot_wider(names_from = taxonRank, values_from = c(taxon_count,prop_taxon)) %>%
+  janitor::clean_names() %>%
+  mutate(across(.fns = function(x) {ifelse(is.na(x),0,x)}),
+         text_label = str_c("Proportion Identified to Genus: ", round(prop_taxon_genus,3),
+                            "\nProportion Identified to Species: ", round(prop_taxon_species,3),
+                            "\nProportion Identified to Sub-species: ",
+                            round(prop_taxon_subspecies,3),
+                            "\nTotal Number of Samples Caught: ", 
+                            taxon_count_genus + taxon_count_species + taxon_count_subspecies))
+  
+
+domain_mis_map = left_join(neon_domains, dat_mis, by = "domain_id")
+
+miss_gg = ggplot(domain_mis_map) + 
+  geom_sf(aes(text = text_label, 
+              fill = prop_taxon_genus)) + 
+  labs(title = "Precision of Mosquito Taxonometric Measurements by Region",
+       fill = "Total Caught") + 
+  scale_fill_viridis_c(name = "Proportion Identified only to Genus") +
+  theme_map()
+
+ggplotly(miss_gg, tooltip = "text")
+
+# Trends in mean taxonRank over time
+  
+dat_trend = mos_id %>%
+  filter(!is.na(individualCount),!is.na(taxonRank)) %>%
+  janitor::clean_names() %>%
+  mutate(collection_day = date(collect_date)) %>%
+  group_by(domain_id, collection_day, taxon_rank) %>%
+  summarize(taxon_count = sum(individual_count)) %>%
+  ungroup() %>%
+  pivot_wider(names_from = taxon_rank, values_from = taxon_count) %>%
+  mutate(across(.fns = function(x) {ifelse(is.na(x),0,x)})) %>%
+  group_by(domain_id,collection_day) %>%
+  mutate(tax_precision = genus + 2*species + 2.5*subspecies,
+         tax_precision = tax_precision / mean(tax_precision)) %>%
+  ungroup() %>%
+  mutate(domain_id = as.factor(domain_id),
+         domain_id = fct_recode(domain_id,
+                                 "Northeast" = "D01",
+                                "Mid Atlantic" = "D02",
+                                "Southeast" = "D03",
+                                "Atlantic Neotropical" = "D04",
+                                "Great Lakes" = "D05",
+                                "Prairie Peninsula" = "D06",
+                                "Appalachians" = "D07",
+                                "Ozarks Complex" = "D08",
+                                "Northern Plains" = "D09",
+                                "Central Plains" = "D10",
+                                "Southern Plains" = "D11",
+                                "Northern Rockies" = "D12",
+                                "South Rockies" = "D13",
+                                "Desert Southwest" = "D14",
+                                "Great Basin" = "D15",
+                                "Pacific Northwest" = "D16",
+                                "Pacific Northwest" = "D17",
+                                "Tundra" = "D18",
+                                "Taiga" = "D19"),
+         collection_day = as_date(collection_day),
+         text_label = str_c("Collection Day: ", collection_day,
+                            "\nTaxonomic Precision Index: ", tax_precision))
+
+trend_gg = ggplot(dat_trend,aes(x = collection_day, y = tax_precision, text = text_label)) +
+  geom_jitter(alpha = 0.4, color = "steelblue") + 
+  geom_smooth(color = "royalblue4") + 
+  facet_wrap(~domain_id) + 
+  labs(title = "Taxonomic Precision Over Time by Region",
+       x = "Collection Day",
+       y = "Taxonomic Precision Index (Higher = more precise)") +
+  theme_few() + 
+  scale_x_date(date_breaks = "1 month", date_labels = "%m %y", expand = expansion())
+
+ggplotly(trend_gg, tooltip = "text")
+  
+```
