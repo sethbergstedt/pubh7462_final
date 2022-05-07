@@ -129,7 +129,7 @@ Total biomass is calculated as the sum of mosquito biomass collected in all trap
 
 </br>
 
-### Annual Trends in Number of Individual Identified by Genus
+### Annual Trends in Number of Individuals Identified by Genus
 
 ```{r species_plot, echo = FALSE, warning = FALSE}
 
