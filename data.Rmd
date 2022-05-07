@@ -1,0 +1,75 @@
+---
+title: "Data Source"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+### Data Source Description
+The National Ecological Observatory Network (NEON) is a continent-scale environmental monitoring project funded by the National Science Foundation to evaluate the changing ecology of regions in the United States over time. Researchers collect biotic and abiotic data in aquatic and terrestrial systems, including information on climate, habitat biogeochemistry, and organismal communities. All of this data is available to the public through the NEON Data Portal. We used the mosquito CO2 trapping data and pathogen identification data from this portal, which includes the counts of different species captured with CDC light traps and the presence of pathogens in pooled sub-samples of those trap contents. Based on data coverage, only the year 2016-2020 were used for basic questions relating to biomass, species richness, and number of mosquitoes identified. For questions relating to pathogens, 2020 data was not used because there are few pathogen identification results from that year as of yet.
+
+National Ecological Observatory Network Data Portal: 
+
+https://data.neonscience.org/
+
+### Data Download Scripts
+The data was accessed using the "neonUtilities" package in R. Two separate scripted were used:
+
+Biomass and species richness data download:
+```{r ecol_data_download, eval = FALSE}
+####
+## project: PUBH 7462 Final Project
+## file: mosq_data_download.R
+## function: download mosquito data from NEON API for exploratory data analysis
+## author: chris wojan
+####
+
+## Load packages
+library(neonUtilities)
+library(tidyverse)
+
+## Load subset of mosquito data - first year with good coverage through last year of RELEASE data
+mosq_data <- loadByProduct(dpID = "DP1.10043.001", site = "all", 
+                                  startdate = "2016-01", enddate = "2020-12")
+
+## Save mosq data list as .RDS
+write_rds(mosq_data, "./data/mosq_data.rds")
+```
+
+Pathogen vectors data download:
+```{r_path_data_download, eval = FALSE}
+
+####
+## project: PUBH 7462 Final Project
+## file: q2_load.R
+## function: pull 2018 NEON mosquito data for question 2 work
+## author: taylor christian
+####
+
+## Load packages
+library(neonUtilities)
+library(tidyverse)
+
+## Load 2019 sample data
+id_subset <- loadByProduct(dpID = "DP1.10043.001", site = "all", 
+                                  startdate = "2016-01", enddate = "2019-12")
+
+## Save mosq data list as .RDS
+write_rds(id_subset, "./data/id_subset.rds")
+
+
+
+## Load 2019 pathogen data
+pathogen_subset <- loadByProduct(dpID = "DP1.10041.001", site = "all", 
+                           startdate = "2016-01", enddate = "2019-12")
+
+write_rds(pathogen_subset, "./data/pathogen_subset.rds")
+```
+
+### Data Citations
+
+NEON (National Ecological Observatory Network). Mosquitoes sampled from CO2 traps (DP1.10043.001), RELEASE-2022. https://doi.org/10.48443/c7h7-q918. Dataset accessed from https://data.neonscience.org on April 24, 2022
+
+NEON (National Ecological Observatory Network). Mosquito pathogen status (DP1.10041.001), RELEASE-2022. https://doi.org/10.48443/m7qd-mm61. Dataset accessed from https://data.neonscience.org on May 2, 2022
